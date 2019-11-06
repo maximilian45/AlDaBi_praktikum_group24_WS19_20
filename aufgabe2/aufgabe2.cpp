@@ -24,6 +24,7 @@ bool wholeComp(const std::string pat, const std::string text, int x, int y){   /
                 return false;
             }
         }
+        return true;
     }
 
 int isPrefix(std::string query, std::string text, int pos){
@@ -84,27 +85,31 @@ void find(const std::string& query, const std::vector<uint32_t>& sa, const std::
 //Searching lp via binary search 
     if(wholeComp(query, text, 0, sa[0])){
         lp = 0;
-        std::cout << "IF 1 \n";
+        std::cout << "if-case #1 -> lp = 0 \n";
     }else if(!wholeComp(query, text, 0, (sa[n]))){
             lp = n;
+            std::cout << "if-case #2 -> lp = n aka sa.size()-1 \n";
     }else{
         //(l,r)=(1,n) is definded above.
         std::cout << "Das hier ist der Beginn der while ...\n";
         while(r-l>1){
             m = std::ceil(((double)l+(double)r)/2); //normally, two ints are floored, but pseudo code wants it ceiled
+            std::cout << "while-loop -> m = " << m << std::endl;
             if(wholeComp(query, text, 0, sa[m])){
-                //if(query.size() == isPrefix(query, text, sa[m])){
                 r=m;
+                std::cout << "while-loop -> if-case -> r = " << r << std::endl;
             }else{
                 l=m;
+                std::cout << "while-loop else-clause -> l = " << l << std::endl;
             }
         }
         lp=r;
+        std::cout << "end of while loop -> lp = " << lp << std::endl;
     }
-    std::cout << "\nSearching lp:\nDas hier ist R: " << r << std::endl;
+    std::cout << "\nSearching lp:\nDas hier ist r: " << r << std::endl;
     std::cout << "Das hier ist rp: " << rp << std::endl;
     std::cout << "Das hier ist lp: " << lp << std::endl;
-    std::cout << "Das hier ist L: " << l << std::endl << std::endl;
+    std::cout << "Das hier ist l: " << l << std::endl << std::endl;
 
 
 l = 0;
@@ -118,7 +123,7 @@ m=0;
         rp = 0;
     }else{
         //(l,r)=(1,n) is definded above.
-        std::cout << "Das hier ist der Beginn der while ...\n";
+        std::cout << "\n\nDas hier ist der Beginn der while ...\n";
         while(r-l>1){
             m = std::ceil(((double)l+(double)r)/2); //is it really ceiled? thought, cpp wound floor the result of a division over to unsigned ints.. 
             if(!(wholeComp(query, text, 0, sa[m])) || (query.size() == isPrefix(query, text, sa[m]))){ //alternative: NOTwholeCompf -> l=m, else r=m;

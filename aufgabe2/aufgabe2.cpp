@@ -8,7 +8,7 @@
 bool wholeComp(const std::string& pat, const std::string& text, int x, int y){ 
     //Funktion die zurück gibt ob das gesuchte pattern bzw Substr 1 lex. kleiner ist als Text      bzw Substr2
     // Falls x != 0 wird im Str2 erst ab stelle x gesucht
-        for(int i = 0; i<pat.size();++i){
+        for(unsigned i = 0; i<pat.size();++i){
             if(pat[i+x]<=text[(y+i)]){
                 if(pat[i+x]==text[(y+i)]){
                     if(i == pat.size()-1){
@@ -27,8 +27,8 @@ bool wholeComp(const std::string& pat, const std::string& text, int x, int y){
         return true;
     }
 
-int isPrefix(std::string query, std::string text, int pos){
-	int count = 0;	
+unsigned isPrefix(std::string query, std::string text, int pos){
+	unsigned count = 0;	
 	for(uint32_t i = 0; i<query.size();++i){
 		if(query[i]==text[pos+i]){
 			count +=1;			
@@ -114,11 +114,11 @@ void find(const std::string& query, const std::vector<uint32_t>& sa, const std::
 
 //variable-definition:
     hits = {}; 
-    uint32_t n = sa.size()-1; //equals text.size()-1
-    uint32_t pat = query.size()-1; //pattern length
+    int32_t n = sa.size()-1; //equals text.size()-1
+    int32_t pat = query.size()-1; //pattern length
 
     int32_t lp = 0;
-    uint32_t rp = n;
+    int32_t rp = n;
     uint32_t l = 0;
     uint32_t r = n;
     uint32_t middle = 0;      //= ceil(((double)l+(double)r)/2);
@@ -178,7 +178,7 @@ void find(const std::string& query, const std::vector<uint32_t>& sa, const std::
 	//set hit-vector up:
     hits.clear();
     if((lp >= 0) && (rp <= n) && (lp <= rp)){
-        for(uint32_t c = lp; c <= rp; ++c){
+        for(int32_t c = lp; c <= rp; ++c){
             hits.push_back(sa[c]);
         }
     std::sort(hits.begin(), hits.end());

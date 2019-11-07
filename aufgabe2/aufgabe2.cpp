@@ -40,6 +40,39 @@ int isPrefix(std::string query, std::string text, int pos){
 	return count;
 }
 
+int lcp(std::string text1, std::string text2, int x, int y){
+	int count = 0;
+	if((text1.size()-x)>= (text2.size()-y)){
+		std::string::iterator it=text2.begin();
+		for(uint32_t i = x; i < (text2.size()-y) ; ++i){
+			if(it != text2.end()){			
+				if(text1[i]==text2[i+y]){
+					count +=1;
+					it+=1;
+					continue;
+				}else{break;}
+			}else{
+				break;
+			}
+		}
+	}else{
+		for(uint32_t i = y; i<(text1.size()-x);++i){
+			std::string::iterator it=text1.begin();
+			if(it!=text1.end()){			
+				if(text1[i+x]==text2[i]){
+					count += 1;
+					++it;
+					continue;
+				}else{break;}
+			}else{
+				break;
+			}		
+		}
+	}
+
+	return count;
+}
+
 //Constructs a suffixarray, lexikographisch sorted
 void construct(std::vector<uint32_t>& sa, const std::string& text){
         if(text == ""){
@@ -60,7 +93,10 @@ void construct(std::vector<uint32_t>& sa, const std::string& text){
 
 //start finding those hits via binary search
 void find(const std::string& query, const std::vector<uint32_t>& sa, const std::string& text, std::vector<uint32_t>& hits){
-    //Fehlerabfang    
+    
+	std::cout<<"LCP OUTPUT: "<< lcp(text,text,sa[1],sa[4]) << std::endl;
+
+	//Fehlerabfang    
     if(query == ""){
 	    std::cout << "Ein Leeres Pattern könnte überall sein..." << std::endl;
 	    return;

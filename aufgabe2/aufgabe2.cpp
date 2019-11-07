@@ -5,7 +5,7 @@
 #include <cmath>
 #include "aufgabe2.hpp"
 
-bool wholeComp(const std::string pat, const std::string text, int x, int y){   //bitte nur auf den Text referenzieren, um bei großen strings nicht aus dem speicher zu fliessen...
+bool wholeComp(const std::string& pat, const std::string& text, int x, int y){   //bitte nur auf den Text referenzieren, um bei großen strings nicht aus dem speicher zu fliessen...
     //Funktion die zurück gibt ob das gesuchte pattern bzw Substr 1 lex. kleiner ist als Text      bzw Substr2
     // Falls x != 0 wird im Str2 erst ab stelle x gesucht
         for(int i = 0; i<pat.size();++i){
@@ -41,7 +41,7 @@ int isPrefix(std::string query, std::string text, int pos){
 }
 
 //lcp-Berechnung:
-int lcp(std::string text1, std::string text2, int x, int y){
+int lcp(std::string& text1, std::string& text2, int x, int y){
 	int count = 0;
 	if((text1.size()-x)>= (text2.size()-y)){
 		std::string::iterator it=text2.begin();
@@ -81,7 +81,7 @@ int lcp(std::string text1, std::string text2, int x, int y){
 void construct(std::vector<uint32_t>& sa, const std::string& text){
         if(text == ""){
         	std::cout << "Im Leeren Text können wir nichts finden" << std::endl;
-            sa.clear();
+            //sa.clear();
         	return;
         }        
 
@@ -89,7 +89,7 @@ void construct(std::vector<uint32_t>& sa, const std::string& text){
     	sa.resize(text.length());
 		size_t pos = 0;
 		std::generate(sa.begin(), sa.end(), [&pos]() { return pos++; });
-		std::sort(sa.begin(), sa.end(), [text](uint32_t x, uint32_t y) {  //lambda, aber bitte nur auf den Text referenzieren, um bei großen strings nicht aus dem speicher zu fliessen...
+		std::sort(sa.begin(), sa.end(), [&text](uint32_t x, uint32_t y) {  //lambda, aber bitte nur auf den Text referenzieren, um bei großen strings nicht aus dem speicher zu fliessen...
 			return wholeComp(text,text,x,y);
 		});
 }
@@ -106,7 +106,13 @@ void find(const std::string& query, const std::vector<uint32_t>& sa, const std::
     	std::cout << "Pattern und Text Identisch, somit ist der Hit direkt an der ersten Position..." << std::endl;
 	    hits.push_back(0);
         return;
-    } //
+    } 
+    if(text==""){
+        std::cout << "Im Leeren Text können wir nichts finden" << std::endl;
+        //sa.clear();
+        return;
+    }    
+    //
 
 //variable-definition:
     hits = {};

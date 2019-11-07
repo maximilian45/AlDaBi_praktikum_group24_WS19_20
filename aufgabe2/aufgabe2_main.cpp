@@ -7,31 +7,42 @@
 int main(int argc, char* argv[]){
 
     std::vector<uint32_t> sa;
-	std::vector<uint32_t> hits = {}; 
+	std::vector<uint32_t> hits; 
+	std::string test = "";
+
 
     if(argc == 1){
         std::cout<<"Unexpected Input!!"<<std::endl;
         return 1;
     }
-    /*
-    std::string si ="si";
-    std::string mi = "mississippi";
-    find(si,sa,mi,hits);
-    */
 
-    std::string text = argv[1];
-    std::cout << text << std::endl;
-    std::string query = argv[2];
-    std::cout << query << std::endl; 
-
-    construct(sa, argv[1]); 
-    std::cout<<"\nSuffix-Array.size():\n" << sa.size();   
-    std::cout << "\nArray:"<< std::endl;
-    for(int i = 0; i<sa.size();++i){
-        std::cout <<  sa[i]<< std::endl;
-    }
-    find(query, sa, text, hits);
+	if(argv[1] == test){
+		std::cout<< "In einem leeren String können wir nichts finden"<<std::endl;	
+		return 0;
+	}
 
 
-    return 0;
+if (argc == 2) {    
+		construct(sa, argv[1]);
+		for (unsigned int jv = 0; jv < sa.size(); ++jv) {
+			std::cout << sa[jv] << "\n";
+		}
+		return 0;
+	}
+
+if (argc > 2) {
+		construct(sa, argv[1]);
+		for (int iv = 2; iv < argc; ++iv) {
+			find(argv[iv], sa, argv[1], hits);
+			if(argv[iv] != test ){
+			std::cout << argv[iv] << ": ";
+			for (unsigned int jh = 0;  jh < hits.size(); jh++) {
+				std::cout << hits[jh] << " ";
+			}}
+			std::cout << "\n";
+		}
+	}
+return 0;
+
+
 }

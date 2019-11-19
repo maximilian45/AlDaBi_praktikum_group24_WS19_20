@@ -86,16 +86,40 @@ void Alignment::compute(const int match, const int mismatch, const int gap, cons
     
     for(int i = 0; i<matrix_.size();++i){
         if((i>seq_h_size_) && (i%(seq_h_size_ + 1)!=0)){
-            double h = matrix_[i-(seq_h_size_ +1)];
-            double l = matrix_[i-1];
+            double h = matrix_[i-(seq_h_size_ +1)].first +gap;
+            double l = matrix_[i-1].first+gap;
             double d ;
-            if()
+            std::cout<<"I: " << i <<std::endl;
+            std::cout<<"I/: " << i/(seq_h_size_+1) <<std::endl;
+            std::cout<<"I%: " <<(i%(seq_h_size_+1)) <<std::endl;
             
             
-            matrix[i] = 
+            if((seq_h_.at (( i % ( seq_h_size_+1 ))-1 ) ) ==( ( seq_v_.at ( (i/ (seq_h_size_+1 ) )-1) ) ) ) {
+                d = matrix_[(i-(seq_h_size_+2))].first + match;
+            }else{
+                d =matrix_[(i-(seq_h_size_+2))].first + mismatch;
+            }
+            
+            double max = fmax(fmax(h,l),d);
+            matrix_[i].first = max; 
+            if(d==max){
+                matrix_[i].second = 1;
+            }else{
+                if(h==max){
+                    matrix_[i].second = 3;
+                }else{
+                    matrix_[i].second = 2;
+                
+                }
+            }
+            }
         }
-    }
     
+    
+        for(int i = 0; i<matrix_.size(); ++i){
+        if(i% (seq_h_size_+1)==0){std::cout<<std::endl;}
+        std::cout<<matrix_[i].first<<" ";
+    }
      
     
 }

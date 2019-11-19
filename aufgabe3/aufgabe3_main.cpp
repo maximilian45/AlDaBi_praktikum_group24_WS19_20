@@ -3,9 +3,9 @@
 
 int main(int argc, char* argv[]){
     
-    Alignment test{"test1","test"};
+    Alignment test{"IMISSMISSISSIPPI","MYMISSISAHIPPIE"};
     //
-    test.compute(3,-1,-1,false);
+    test.compute(3,-4,-6,false);
     
     if(argc != 5){
         

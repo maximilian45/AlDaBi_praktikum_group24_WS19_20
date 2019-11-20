@@ -12,7 +12,6 @@ Alignment::Alignment(const std::string& seq_v, const std::string& seq_h){
     seq_v_size_ = seq_v_.size();
     seq_h_size_ = seq_h_.size();
     score_ = -100000;
-    //matrix_ = std::vector<std::pair<double,int>>( ((seq_v_size_+1) * (seq_h_size_+1)), (std::make_pair(0.0,NULL)) );
 }
 
 void Alignment::compute(const int match, const int mismatch, const int gap, const bool local_align){
@@ -27,7 +26,6 @@ void Alignment::compute(const int match, const int mismatch, const int gap, cons
     a2_.clear();
     gaps_.clear();
     matrix_ = std::vector<std::pair<double,int>>( ((seq_v_size_+1) * (seq_h_size_+1)), (std::make_pair(0.0,NULL)) );
-    
     int diagonal = 1;
     int links = 2;
     int hoch = 3;    
@@ -47,22 +45,6 @@ void Alignment::compute(const int match, const int mismatch, const int gap, cons
         }    
     }
     matrix_[0].second = 0;
-    
-   /* 
-   // PRINTOUT SAMPLE after INIT
-    //std::cout<<"matrix_size: " <<matrix_.size()<<std::endl;
-    //matrix_[2*3+1] = std::make_pair(1,2);
-    for(int i = 0; i<matrix_.size(); ++i){
-        if(i% (seq_h_size_+1)==0){std::cout<<std::endl;}
-        std::cout<<matrix_[i].first;
-    } 
-    std::cout<<"Tracebackmatrix_:" <<std::endl;
-    
-    for(int i = 0; i<matrix_.size(); ++i){
-        if(i% (seq_h_size_+1)==0){std::cout<<std::endl;}
-        std::cout<<matrix_[i].second;
-    }
-    */
     
     //Matrixbefüllung
     for(int i = 0; i<matrix_.size();++i){
@@ -90,16 +72,7 @@ void Alignment::compute(const int match, const int mismatch, const int gap, cons
             }
         }
     }
-
     score_ = matrix_[matrix_.size()-1].first;
-
-    //Matrix-Print-Out:
-    std::cout << "Score-Matrix: " << std::endl;
-    for(int i = 0; i < matrix_.size(); ++i){
-        if(i% (seq_h_size_+1)==0){std::cout<<std::endl;}
-    std::cout<<matrix_[i].first<<" ";
-    }
-
 
     //###########Trace-Back check to complete strings and fill gap-string########
     //start push_backs in member-variables 
@@ -116,8 +89,6 @@ void Alignment::compute(const int match, const int mismatch, const int gap, cons
             }
             a1_.push_back(seq_v_.at((i / (seq_h_size_ +1 )) -1 ));
             a2_.push_back(seq_h_.at(( i % (seq_h_size_ + 1)) -1 ));
-            
-
             i = i - seq_h_size_ -2; 
         }else if(matrix_[i].second == 2){ //Links
             if(i <= seq_h_size_){
@@ -146,21 +117,14 @@ void Alignment::compute(const int match, const int mismatch, const int gap, cons
 
     std::reverse(a1_.begin(), a1_.end());
     std::reverse(a2_.begin(), a2_.end());
-    std::reverse(gaps_.begin(), gaps_.end());
-
-    //this must go in getAlignment() !
-    std::cout << std::endl << a1_ << std::endl << gaps_ << std::endl << a2_ << std::endl ;
-
-
+    std::reverse(gaps_.begin(), gaps_.end());    
 }
-
 
 int Alignment::score() const{
     //aus der befüllten matrix_ optimalen score extrahieren
     if( score_ == -100000 ){
         throw std::logic_error("Sie muessen via Compute-Fkt. erst das Allignment berechnen bevor es einen Score geben kann.");
     } else {
-        std::cout << "\nScore: " << score_ << std::endl; //delete this line before commitment
         return score_;
     }
 }
@@ -170,9 +134,9 @@ void Alignment::getAlignment(std::string& a1, std::string& gaps, std::string& a2
     if( score_ == -100000 ){
         throw std::logic_error("Sie muessen via Compute-Fkt. erst das Allignment berechnen bevor es einen Score geben kann.");
     }
-    a1= a1_;
-    a2= a2_;
+    a1 = a1_;
+    a2 = a2_;
     gaps = gaps_;
-    
+    std::cout << std::endl << a1_ << std::endl << gaps_ << std::endl << a2_ << std::endl ;
 }
 

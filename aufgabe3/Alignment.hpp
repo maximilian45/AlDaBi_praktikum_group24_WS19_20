@@ -56,6 +56,5 @@ private:
     std::string a2_;
     std::string gaps_;
     std::vector<std::pair<double,int>> matrix_;//( ((seq_v_size+1) * (seq_h_size+1)), (std::make_pair(0,NULL)) );
-
-    
+        
 };

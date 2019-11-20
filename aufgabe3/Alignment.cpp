@@ -23,6 +23,9 @@ void Alignment::compute(const int match, const int mismatch, const int gap, cons
    }
 
     matrix_.clear();
+    a1_.clear();
+    a2_.clear();
+    gaps_.clear();
     matrix_ = std::vector<std::pair<double,int>>( ((seq_v_size_+1) * (seq_h_size_+1)), (std::make_pair(0.0,NULL)) );
     
     int diagonal = 1;
@@ -167,6 +170,9 @@ void Alignment::getAlignment(std::string& a1, std::string& gaps, std::string& a2
     if( score_ == -100000 ){
         throw std::logic_error("Sie muessen via Compute-Fkt. erst das Allignment berechnen bevor es einen Score geben kann.");
     }
+    a1= a1_;
+    a2= a2_;
+    gaps = gaps_;
     
 }
 

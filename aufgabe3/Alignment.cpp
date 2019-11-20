@@ -12,7 +12,7 @@ Alignment::Alignment(const std::string& seq_v, const std::string& seq_h){
     seq_v_size_ = seq_v_.size();
     seq_h_size_ = seq_h_.size();
     score_ = -100000;
-    matrix_ = std::vector<std::pair<double,int>>( ((seq_v_size_+1) * (seq_h_size_+1)), (std::make_pair(0.0,NULL)) );
+    //matrix_ = std::vector<std::pair<double,int>>( ((seq_v_size_+1) * (seq_h_size_+1)), (std::make_pair(0.0,NULL)) );
 }
 
 void Alignment::compute(const int match, const int mismatch, const int gap, const bool local_align){
@@ -22,6 +22,9 @@ void Alignment::compute(const int match, const int mismatch, const int gap, cons
         return;
    }
 
+    matrix_.clear();
+    matrix_ = std::vector<std::pair<double,int>>( ((seq_v_size_+1) * (seq_h_size_+1)), (std::make_pair(0.0,NULL)) );
+    
     int diagonal = 1;
     int links = 2;
     int hoch = 3;    
@@ -85,7 +88,6 @@ void Alignment::compute(const int match, const int mismatch, const int gap, cons
         }
     }
 
-    ///Wenn die matrix am ende gecleared wird, ist diese Zuweisung fuer die score()-funktion essentiell:
     score_ = matrix_[matrix_.size()-1].first;
 
     //Matrix-Print-Out:
@@ -143,25 +145,26 @@ void Alignment::compute(const int match, const int mismatch, const int gap, cons
     std::reverse(a2_.begin(), a2_.end());
     std::reverse(gaps_.begin(), gaps_.end());
 
+    //this must go in getAlignment() !
     std::cout << std::endl << a1_ << std::endl << gaps_ << std::endl << a2_ << std::endl ;
 
-    matrix_.clear();
 
 }
 
 
 int Alignment::score() const{
     //aus der befüllten matrix_ optimalen score extrahieren
-    if(matrix_[matrix_.size()-1].second == NULL){
+    if( score_ == -100000 ){
         throw std::logic_error("Sie muessen via Compute-Fkt. erst das Allignment berechnen bevor es einen Score geben kann.");
     } else {
-        return matrix_[matrix_.size()-1].first;
+        std::cout << "\nScore: " << score_ << std::endl; //delete this line before commitment
+        return score_;
     }
 }
 
 void Alignment::getAlignment(std::string& a1, std::string& gaps, std::string& a2) const{
     //Produktion der alignment und gap strings anhand der Matirx aus compute und dem score aus score.
-    if(matrix_[matrix_.size()-1].second == NULL){
+    if( score_ == -100000 ){
         throw std::logic_error("Sie muessen via Compute-Fkt. erst das Allignment berechnen bevor es einen Score geben kann.");
     }
     

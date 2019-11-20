@@ -1,0 +1,16 @@
+max@Maxi-Alien ➜  aufgabe2 ./aufgabe2_bench Candidatus.Solibacter.usitatusEllin6076.fasta 1000000
+Text length: 9965640 starting with CAAATCTACCTGAACATCAGCACCTACCGGCTAATTGCTTCTCTTGTTCTCCCTGTGGAAATCGTGTGGGATACGTGTGTAAAAGCTGATGAATTATTGG...
+Performing 1000000 queries
+Construction starts ... 
+Construction time: 5.84375
+Search starts ... 
+Search time: 9455.2 for 1062218 hits
+Total time: 9461.05 sec
+max@Maxi-Alien ➜  aufgabe2 lol
+zsh: command not found: lol
+max@Maxi-Alien ➜  aufgabe2 
+
+///Hier ist die Ausgabe des Programms. Aufgrund einer nur versuchten mlr-Heuristik ist die benoetigte Zeit rapide in die Hoehe geschossen...
+///Aber es hat funktioniert. Die ausgabe "\nWrong number of hits -- go fix your code!\n" erschien ebenfalls nicht. Dennoch ist es verwunder-
+///lich, dass mehr Hits gefunden wurden, als Queries gesucht wurden. (Aufgrund der Uhrzeit kann ich dies aber auch falsch verstanden haben)
+///Search time: 2h 38m 1.05s

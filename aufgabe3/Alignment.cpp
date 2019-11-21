@@ -33,6 +33,7 @@ void Alignment::compute(const int match, const int mismatch, const int gap, cons
         
         //Matrixbefüllung
         double tempMax = 0;
+        int maxIndex = 0;
         for(int i = 0; i<matrix_.size();++i){
             if((i>seq_h_size_) && (i%(seq_h_size_ + 1)!=0)){
                 double h = matrix_[i-(seq_h_size_ +1)].first +gap;
@@ -49,6 +50,7 @@ void Alignment::compute(const int match, const int mismatch, const int gap, cons
                 matrix_[i].first = max; 
                 if(max > tempMax){
                     tempMax = max; // MAXSCORE FÜR TRACEBACK START
+                    maxIndex = i;
                 }
                 if(max == 0){
                     matrix_[i].second = NULL;
@@ -68,7 +70,7 @@ void Alignment::compute(const int match, const int mismatch, const int gap, cons
         }
     score_ = tempMax;
     
-   int i = matrix_.size()-1;
+   int i = maxIndex;
     while(i > 0){
         if(matrix_[i].second == NULL){
             break;

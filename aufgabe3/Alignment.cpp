@@ -16,19 +16,114 @@ Alignment::Alignment(const std::string& seq_v, const std::string& seq_h){
 
 void Alignment::compute(const int match, const int mismatch, const int gap, const bool local_align){
    
+    int diagonal = 1;
+    int links = 2;
+    int hoch = 3;
+   
    if(local_align == true){
-        throw std::invalid_argument("Die Implementierung unterstuetzt kein smith-waterman");
-        return;
-   }
+        //throw std::invalid_argument("Die Implementierung unterstuetzt kein smith-waterman");
+        
+        matrix_.clear();
+        a1_.clear();
+        a2_.clear();
+        gaps_.clear();
+        matrix_ = std::vector<std::pair<double,int>>( ((seq_v_size_+1) * (seq_h_size_+1)), (std::make_pair(0.0,NULL)) );
+        
+        //INITIALISIERUNG BEREITS PASSIERT!! DURH ART DER MATRIXERSTELLUNG sind zeile und spalte ein bereits mit 0,Null befüllt
+        
+        //Matrixbefüllung
+        double tempMax = 0;
+        for(int i = 0; i<matrix_.size();++i){
+            if((i>seq_h_size_) && (i%(seq_h_size_ + 1)!=0)){
+                double h = matrix_[i-(seq_h_size_ +1)].first +gap;
+                double l = matrix_[i-1].first+gap;
+                double d;
+            
+                if((seq_h_.at (( i % ( seq_h_size_+1 ))-1 ) ) ==( ( seq_v_.at ( (i/ (seq_h_size_+1 ) )-1) ) ) ) {
+                    d = matrix_[(i-(seq_h_size_+2))].first + match;
+                }else{
+                    d =matrix_[(i-(seq_h_size_+2))].first + mismatch;
+                }
+            
+                double max = fmax(fmax(fmax(h,l),d),0);
+                matrix_[i].first = max; 
+                if(max > tempMax){
+                    tempMax = max; // MAXSCORE FÜR TRACEBACK START
+                }
+                if(max == 0){
+                    matrix_[i].second = NULL;
+                    
+                }else{
+                if(d==max){
+                    matrix_[i].second = 1;
+                }else{
+                    if(h==max){
+                        matrix_[i].second = 3;
+                    }else{
+                        matrix_[i].second = 2;
+                    }
+                }
+            }
+            }
+        }
+    score_ = tempMax;
+    
+   int i = matrix_.size()-1;
+    while(i > 0){
+        if(matrix_[i].second == NULL){
+            break;
+        }else if(matrix_[i].second == 1){ //Diagonal
+            //if-check for match or mismatch:
+            if((seq_v_.at((i / (seq_h_size_ +1 )) -1 )) == (seq_h_.at(( i % (seq_h_size_ + 1)) -1 ))){  //better use div and quot to avoid float flooring 
+                gaps_.push_back('|');
+            }else{
+                gaps_.push_back(' ');
+            }
+            a1_.push_back(seq_v_.at((i / (seq_h_size_ +1 )) -1 ));
+            a2_.push_back(seq_h_.at(( i % (seq_h_size_ + 1)) -1 ));
+            i = i - seq_h_size_ -2; 
+        }else if(matrix_[i].second == 2){ //Links
+            if(i <= seq_h_size_){
+                a1_.push_back('-');
+                a2_.push_back(seq_h_.at(i));
+                gaps_.push_back(' '); 
+            }else{
+                a1_.push_back('-');
+                a2_.push_back(seq_h_.at((i % (seq_h_size_+1 )) -1 ));
+                gaps_.push_back(' ');
+            }
+            i = i - 1; 
+        }else if(matrix_[i].second == 3){ //Hoch
+            if(i % (seq_h_size_ + 1) == 0){ //falls wir uns am "linken Rand" der gemalten Matrix befinden
+                a1_.push_back(seq_v_.at( i / (seq_h_size_+1) -1 ));
+                a2_.push_back('-'); 
+                gaps_.push_back(' ');
+            }else{
+                a1_.push_back(seq_v_.at(( i / (seq_h_size_ + 1)) -1 ));
+                a2_.push_back('-'); 
+                gaps_.push_back(' ');
+            }
+            i = i - seq_h_size_ -1; 
+        }
+    }
+
+    std::reverse(a1_.begin(), a1_.end());
+    std::reverse(a2_.begin(), a2_.end());
+    std::reverse(gaps_.begin(), gaps_.end());
+        
+        
+        
+        
+   }else{
+
+    //ENDE SMITH-WATERMAN
 
     matrix_.clear();
     a1_.clear();
     a2_.clear();
     gaps_.clear();
     matrix_ = std::vector<std::pair<double,int>>( ((seq_v_size_+1) * (seq_h_size_+1)), (std::make_pair(0.0,NULL)) );
-    int diagonal = 1;
-    int links = 2;
-    int hoch = 3;    
+    
     
     //matrix_ INITIALISIERUNG
     int tempCount = 1;
@@ -117,7 +212,8 @@ void Alignment::compute(const int match, const int mismatch, const int gap, cons
 
     std::reverse(a1_.begin(), a1_.end());
     std::reverse(a2_.begin(), a2_.end());
-    std::reverse(gaps_.begin(), gaps_.end());    
+    std::reverse(gaps_.begin(), gaps_.end());  
+    }  
 }
 
 int Alignment::score() const{

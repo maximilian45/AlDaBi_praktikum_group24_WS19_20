@@ -16,20 +16,16 @@ Alignment::Alignment(const std::string& seq_v, const std::string& seq_h){
 
 void Alignment::compute(const int match, const int mismatch, const int gap, const bool local_align){
    
-    int diagonal = 1;
     int links = 2;
     int hoch = 3;
    
-   if(local_align == true){
-        //throw std::invalid_argument("Die Implementierung unterstuetzt kein smith-waterman");
-        
+   if(local_align == true){  
         matrix_.clear();
         a1_.clear();
         a2_.clear();
         gaps_.clear();
         matrix_ = std::vector<std::pair<double,int>>( ((seq_v_size_+1) * (seq_h_size_+1)), (std::make_pair(0.0,NULL)) );
-        
-        //INITIALISIERUNG BEREITS PASSIERT!! DURH ART DER MATRIXERSTELLUNG sind zeile und spalte ein bereits mit 0,Null befüllt
+        //durch die Matrixerstellung sind "Zeile" und "Spalte" bereits mit (0,NULL) befüllt
         
         //Matrixbefüllung
         double tempMax = 0;
@@ -45,7 +41,6 @@ void Alignment::compute(const int match, const int mismatch, const int gap, cons
                 }else{
                     d =matrix_[(i-(seq_h_size_+2))].first + mismatch;
                 }
-            
                 double max = fmax(fmax(fmax(h,l),d),0);
                 matrix_[i].first = max; 
                 if(max > tempMax){
@@ -54,21 +49,20 @@ void Alignment::compute(const int match, const int mismatch, const int gap, cons
                 }
                 if(max == 0){
                     matrix_[i].second = NULL;
-                    
                 }else{
-                if(d==max){
-                    matrix_[i].second = 1;
-                }else{
-                    if(h==max){
-                        matrix_[i].second = 3;
+                    if(d==max){
+                        matrix_[i].second = 1;
                     }else{
-                        matrix_[i].second = 2;
+                        if(h==max){
+                            matrix_[i].second = 3;
+                        }else{
+                            matrix_[i].second = 2;
+                        }
                     }
                 }
             }
-            }
         }
-    score_ = tempMax;
+        score_ = tempMax;
     
    int i = maxIndex;
     while(i > 0){
@@ -108,25 +102,19 @@ void Alignment::compute(const int match, const int mismatch, const int gap, cons
             i = i - seq_h_size_ -1; 
         }
     }
-
     std::reverse(a1_.begin(), a1_.end());
     std::reverse(a2_.begin(), a2_.end());
-    std::reverse(gaps_.begin(), gaps_.end());
-        
-        
-        
-        
-   }else{
+    std::reverse(gaps_.begin(), gaps_.end());    
+///ENDE SMITH-WATERMAN    
+    }else{
 
-    //ENDE SMITH-WATERMAN
+// ######## Needleman-Wunsch ########
 
     matrix_.clear();
     a1_.clear();
     a2_.clear();
     gaps_.clear();
     matrix_ = std::vector<std::pair<double,int>>( ((seq_v_size_+1) * (seq_h_size_+1)), (std::make_pair(0.0,NULL)) );
-    
-    
     //matrix_ INITIALISIERUNG
     int tempCount = 1;
     for(int i = 0; i<matrix_.size();++i){
@@ -155,7 +143,6 @@ void Alignment::compute(const int match, const int mismatch, const int gap, cons
             }else{
                 d =matrix_[(i-(seq_h_size_+2))].first + mismatch;
             }
-            
             double max = fmax(fmax(h,l),d);
             matrix_[i].first = max; 
             if(d==max){
@@ -211,7 +198,6 @@ void Alignment::compute(const int match, const int mismatch, const int gap, cons
             i = i - seq_h_size_ -1; 
         }
     }
-
     std::reverse(a1_.begin(), a1_.end());
     std::reverse(a2_.begin(), a2_.end());
     std::reverse(gaps_.begin(), gaps_.end());  
@@ -237,4 +223,3 @@ void Alignment::getAlignment(std::string& a1, std::string& gaps, std::string& a2
     gaps = gaps_;
     std::cout << std::endl << a1_ << std::endl << gaps_ << std::endl << a2_ << std::endl ;
 }
-

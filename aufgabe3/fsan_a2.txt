@@ -12,5 +12,7 @@ max@Maxi-Alien ➜  aufgabe2
 
 ///Hier ist die Ausgabe des Programms. Aufgrund einer nur versuchten mlr-Heuristik ist die benoetigte Zeit rapide in die Hoehe geschossen...
 ///Aber es hat funktioniert. Die ausgabe "\nWrong number of hits -- go fix your code!\n" erschien ebenfalls nicht. Dennoch ist es verwunder-
-///lich, dass mehr Hits gefunden wurden, als Queries gesucht wurden. (Aufgrund der Uhrzeit kann ich dies aber auch falsch verstanden haben)
+///lich, dass mehr Hits gefunden wurden, als Queries gesucht wurden. Dies wirkt auf den ersten Bick etwas verwunderlich allerdings ist das durchaus möglich, da
+///eine Query ja durchaus mehr als einmal im Genom gefunden werden kann. Uns fällt also nichts auf was wir direkt als Fehler interpretieren würden, allerdings
+///könnte es sich bei der Menge der gefundenen Hits um den von ihnen angedeuteten Fehler handeln.
 ///Search time: 2h 38m 1.05s

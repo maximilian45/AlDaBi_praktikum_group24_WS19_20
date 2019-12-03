@@ -13,37 +13,16 @@ int BLAST_Neighborhood::scoring(const ScoreMatrix& matrix, std::string s1, std::
     }
     return score;
 }
-
-void BLAST_Neighborhood::getAllWords(std::string kmer, int sizeA, int sizeW, std::vector<std::string>& allWords) {
+//
+void BLAST_Neighborhood::getAllWords(std::string kmer, int sizeW, std::vector<std::string>& allWords) {
     if (sizeW == 0) {
         allWords.push_back(kmer);
         return;
     }
-    for (int i=0; i<sizeA; ++i) {
+    for (int i=0; i<20; ++i) {
         std::string tmpWord = kmer;
         tmpWord.push_back(toAminoAcid(i));
-        getAllWords(tmpWord, sizeA, sizeW-1, allWords);
-}
-
-
-//rekursive Nachbargenerierung
-std::vector<std::pair<std::string,int>> BLAST_Neighborhood::genNeigh(NHResult input, int kmer,const ScoreMatrix& matrix,const int score_threshold){
-    //Übergehen der Worte die im Slebstvergleich unter dem Treshhold landen, da dies der fürs Wort der maximale Score wert wäre
-    if(scoring(matrix,input.infix,input.infix) < score_threshold){
-        return std::vector<std::pair<std::string,int>> output;
-    }
-    
-
-    //Mögliche ankervariante
-    if(kmer = 1){
-        
-        
-    }else{
-        //Berechnung aller möglichen kmere und deren SCores
-           
-        
-        
-        
+        getAllWords(tmpWord, sizeW-1, allWords);
     }
 }
 
@@ -61,7 +40,8 @@ std::vector<NHResult> BLAST_Neighborhood::generateNeighborhood(const std::string
     }*/
     
     std::vector<NHResult> result(query.size()-(word_size-1));
-    if((query.size()-1) < word_size){
+   // result.clear();
+    if((query.size()) < word_size){
         return result;
     }
     
@@ -74,38 +54,52 @@ std::vector<NHResult> BLAST_Neighborhood::generateNeighborhood(const std::string
         result[i] = tmp;
     }
     
-    
+    /*
     
     //RESULT.INFIX PRINT!!!!!
     for(int i = 0; i< result.size(); ++i){
         std::cout << "Result von " << i << ": " << scoring(matrix,result[i].infix,result[i].infix) << std::endl;
-    }
+    }*/
     
     //Generieren alles möglichen kmere
     std::vector<std::string> allWords;
-    getAllWords("",20,word_size,allWords);
-    
-    //PARALELLSTART!!!!
-   
-  /* for(int l = 0; l<result.size();++l){ 
-        
-        for(int i = 0;i<20;++i){
-            NHResult tmp;
-            for(int j = 0; j< 20 , ++j){
-                for(int k = 0; k<20; ++k){
-                    std::string tmpS;
-                    tmpS += toAminoAcid(i);
-                    tmpS += toAminoAcid(j);
-                    tmpS += toAminoAcid(k);
-                
-                }
-            }
+    getAllWords("",word_size,allWords);
+
+    //ALLWORDS PRINT
+    /*
+    for(int i = 0; i< allWords.size();++i){
+        std::cout << allWords[i] << " " << i<<std::endl;        
+    } */   
+
+
+
+   //Merken welche der Infixe nicht übreprüft werden soll, da sie im match mit sich selber nicht über den Treshhold kommen
+   std::vector<int> ausschuss;
+   for(int i = 0; i< result.size();++i){
+        if(scoring(matrix,result[i].infix,result[i].infix) < score_threshold){
+            ausschuss.push_back(0);
+        }else{
+            ausschuss.push_back(1);
         }
-    }*/
-    
+   }
+   
+    //PARALELLSTART!!!! #2 #pragma omp barrier
+    #pragma omp parallel for num_threads(threads)
     for(int i = 0; i < result.size(); ++i){
         NHResult tmp = result[i];
-        
+        std::vector< std::pair <std::string, int> > tmpNeighbours;
+        if(ausschuss[i] == 0){
+            continue;
+        }else{
+            for(int j = 0; j<allWords.size();++j){
+                int tmpScore = scoring(matrix, tmp.infix,allWords[j]);
+                if(tmpScore >= score_threshold){
+                    tmpNeighbours.push_back(make_pair(allWords[j],tmpScore)); // Müsste gehen, da ja jeder thred sich die tmp Variablen selber erstellt                }
+                } 
+        }
+        //#pragma omp barrier
+        result[i].neighbours = tmpNeighbours;
+        }
     }
     
     

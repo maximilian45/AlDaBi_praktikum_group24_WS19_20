@@ -56,5 +56,7 @@ class BLAST_Neighborhood
   private:
   // your private member _functions_ go here <> (if needed)
   // hint: private member _variables_ are probably not required 
-  
+  std::vector<std::pair<std::string,int>> genNeigh(NHResult input, int kmer,const ScoreMatrix& matrix,const int score_threshold); 
+  int scoring(const ScoreMatrix& matrix, std::string s1, std::string s2);
+  void getAllWords(std::string kmer, int sizeW, std::vector<std::string>& allWords);
 };

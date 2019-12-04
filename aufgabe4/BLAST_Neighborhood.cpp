@@ -13,7 +13,7 @@ int BLAST_Neighborhood::scoring(const ScoreMatrix& matrix, std::string s1, std::
     }
     return score;
 }
-//
+
 void BLAST_Neighborhood::getAllWords(std::string kmer, int sizeW, std::vector<std::string>& allWords) {
     if (sizeW == 0) {
         allWords.push_back(kmer);
@@ -26,52 +26,38 @@ void BLAST_Neighborhood::getAllWords(std::string kmer, int sizeW, std::vector<st
     }
 }
 
-
 std::vector<NHResult> BLAST_Neighborhood::generateNeighborhood(const std::string& query,
                                            const ScoreMatrix& matrix,
                                            const int word_size,
                                            const int score_threshold,
                                            const int threads){
+
+    std::vector<NHResult> result;
     if(word_size < 1){
-        throw std::logic_error("Die Größe der gesuchten Nachbarn darf nicht kleiner als 1 sein.");
-    }/*
-    if(threads != 1){// MUSS NACH EINFÜGEN DER PARAL. RAUSGENOMMEN WERDEN!!!!!!!!!!!!!!
-        throw std::logic_error("Diese Implementierung unterstützt keine Paralellsierung!");
-    }*/
-    
-    std::vector<NHResult> result(query.size()-(word_size-1));
-   // result.clear();
+        throw std::logic_error("Die Größe der Worte darf nicht kleiner als 1 sein.");
+    }
+    if(threads < 1){
+        throw std::logic_error("Eine Ausfuehrung benoetigt mindestens einen Thread.");
+    }
     if((query.size()) < word_size){
+        //throw std::logic_error("Die Größe Query darf nicht kleiner als die gewuenschte Wortgroesse sein.");
+        //aber das Testprogramm will hier keinen Error, sondern result returned haben.
         return result;
     }
     
     //Bilden aller Infixe der länge word_size und speichern in result als NHResults
-    
+    result.resize(query.size()-(word_size-1));
+
     #pragma omp parallel for num_threads(threads)
     for(int i = 0; i<=query.size()-word_size;++i){
-        NHResult tmp;//kann evt aus schleife raus
+        NHResult tmp;
         tmp.infix = query.substr(i,word_size);
         result[i] = tmp;
     }
     
-    /*
-    
-    //RESULT.INFIX PRINT!!!!!
-    for(int i = 0; i< result.size(); ++i){
-        std::cout << "Result von " << i << ": " << scoring(matrix,result[i].infix,result[i].infix) << std::endl;
-    }*/
-    
-    //Generieren alles möglichen kmere
+    //Generieren aller möglichen kmere
     std::vector<std::string> allWords;
-    getAllWords("",word_size,allWords);
-
-    //ALLWORDS PRINT
-    /*
-    for(int i = 0; i< allWords.size();++i){
-        std::cout << allWords[i] << " " << i<<std::endl;        
-    } */   
-
-
+    getAllWords("",word_size,allWords);   
 
    //Merken welche der Infixe nicht übreprüft werden soll, da sie im match mit sich selber nicht über den Treshhold kommen
    std::vector<int> ausschuss;
@@ -83,7 +69,6 @@ std::vector<NHResult> BLAST_Neighborhood::generateNeighborhood(const std::string
         }
    }
    
-    //PARALELLSTART!!!! #2 #pragma omp barrier
     #pragma omp parallel for num_threads(threads)
     for(int i = 0; i < result.size(); ++i){
         NHResult tmp = result[i];
@@ -101,11 +86,5 @@ std::vector<NHResult> BLAST_Neighborhood::generateNeighborhood(const std::string
         result[i].neighbours = tmpNeighbours;
         }
     }
-    
-    
-    
-   // std::cout<<"I!!!!"<<std::endl;
-    
-                                           
-    return result;
+return result;
 }

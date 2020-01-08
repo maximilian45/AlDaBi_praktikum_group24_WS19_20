@@ -81,7 +81,7 @@ public:
 private:
    // YOUR PRIVATE MEMBER FUNCTIONS and VARIABLES HERE
 
-    const std::string& genomdata;
+  const std::string& genomdata;
 	uint8_t querylength ;
 	std::vector<int> suftab;
 	std::vector<uint32_t> dir;

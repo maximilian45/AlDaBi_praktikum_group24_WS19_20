@@ -7,13 +7,12 @@
 
 int main(int argc, char* argv[]) {
     // read text from in_file
-    int threads = atoi(argv[3]);
-    omp_set_num_threads(threads);
+    
     std::string text;
     std::ifstream data (argv[1]);
     if (!data.good()){
-		std::cerr << "Unable to open requested file!" << std::endl;
-		return 1; //cancel
+		    std::cerr << "Unable to open requested file!" << std::endl;
+		    return 1; //cancel
     } else {
         getline(data, text); //T from file to text
     }
@@ -23,7 +22,9 @@ int main(int argc, char* argv[]) {
     uint8_t q = query.length();
     
     // Generate Q as instance from class with given parameters
+    int threads = atoi(argv[3]);
     int start = omp_get_wtime();
+    omp_set_num_threads(threads);
     QGramIndex Q(text,q);
     std::cout << "ENDZEIT" << omp_get_wtime()-start <<std::endl;
     

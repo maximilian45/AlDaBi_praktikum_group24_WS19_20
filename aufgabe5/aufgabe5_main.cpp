@@ -22,9 +22,11 @@ int main(int argc, char* argv[]) {
     uint8_t q = query.length();
     
     // Generate Q as instance from class with given parameters
+    if(argc == 4){
     int threads = atoi(argv[3]);
     // int start = omp_get_wtime();
     omp_set_num_threads(threads);
+    }
     QGramIndex Q(text,q);
     // std::cout << "ENDZEIT" << omp_get_wtime()-start <<std::endl;
     

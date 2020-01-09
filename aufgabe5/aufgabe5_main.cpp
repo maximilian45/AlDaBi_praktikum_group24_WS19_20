@@ -23,10 +23,10 @@ int main(int argc, char* argv[]) {
     
     // Generate Q as instance from class with given parameters
     int threads = atoi(argv[3]);
-    int start = omp_get_wtime();
+    // int start = omp_get_wtime();
     omp_set_num_threads(threads);
     QGramIndex Q(text,q);
-    std::cout << "ENDZEIT" << omp_get_wtime()-start <<std::endl;
+    // std::cout << "ENDZEIT" << omp_get_wtime()-start <<std::endl;
     
     // Get the hits and take its vectors' size
     std::vector<uint32_t> hits = Q.getHits(Q.hash(query));
